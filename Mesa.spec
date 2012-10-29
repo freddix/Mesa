@@ -21,8 +21,8 @@ BuildRequires:	libdrm-devel
 BuildRequires:	libstdc++-devel
 BuildRequires:	libtool
 BuildRequires:	llvm-devel
-BuildRequires:	sed >= 4.0
 BuildRequires:	xorg-libXdamage-devel
+BuildRequires:	xorg-libXxf86vm-devel
 BuildRequires:	xorg-proto >= 7.6
 BuildRequires:	xorg-util-makedepend
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
