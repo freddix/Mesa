@@ -1,4 +1,4 @@
-%define		gitver	2332bc26d435e465a6f6571ab267db2a33ce05d2
+%define		gitver	%{nil}
 
 Summary:	Free OpenGL implementation
 Name:		Mesa
@@ -8,8 +8,8 @@ Release:	0.%{gitver}.1
 Source:		http://cgit.freedesktop.org/mesa/mesa/snapshot/mesa-%{gitver}.tar.bz2
 %else
 Release:	1
-Source0:	ftp://ftp.freedesktop.org/pub/mesa/%{version}/MesaLib-9.0.tar.gz
-# Source0-md5:	2b3c62bd37dc0c2d7e25f6cf67e85dc1
+Source0:	ftp://ftp.freedesktop.org/pub/mesa/%{version}/MesaLib-%{version}.tar.gz
+# Source0-md5:	fd0fd5a6e56bc3dd210c80e42baef975
 %endif
 License:	MIT (core), SGI (GLU) and others - see COPYRIGHT file
 Group:		X11/Libraries
@@ -110,7 +110,7 @@ X.org DRI software rasterizer driver.
 %if "%{gitver}" != "%{nil}"
 %setup -qn mesa-%{gitver}
 %else
-%setup -qn %{name}-9.0
+%setup -q
 %endif
 
 %build
