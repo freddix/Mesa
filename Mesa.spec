@@ -2,14 +2,14 @@
 
 Summary:	Free OpenGL implementation
 Name:		Mesa
-Version:	9.0.2
+Version:	9.1
 %if "%{gitver}" != "%{nil}"
 Release:	0.%{gitver}.1
 Source:		http://cgit.freedesktop.org/mesa/mesa/snapshot/mesa-%{gitver}.tar.bz2
 %else
 Release:	1
 Source0:	ftp://ftp.freedesktop.org/pub/mesa/%{version}/MesaLib-%{version}.tar.gz
-# Source0-md5:	5ae216ca9fecfa349f14ecb83aa3f124
+# Source0-md5:	86d40f3056f89949368764bf84aff55e
 %endif
 License:	MIT (core), SGI (GLU) and others - see COPYRIGHT file
 Group:		X11/Libraries
@@ -28,7 +28,7 @@ BuildRequires:	xorg-util-makedepend
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		dridir			%{_libdir}/xorg/modules/dri
-%define		skip_post_check_so	libdricore.*\.so.*
+%define		skip_post_check_so	libdricore.*.so.* libGL.so.1.*
 
 %description
 Mesa is a 3-D graphics library with an API which is very similar to
@@ -42,6 +42,7 @@ compatible replacement for OpenGL or associated with SGI.
 Summary:	Free Mesa3D implementation of libGL OpenGL library
 License:	MIT
 Group:		X11/Libraries
+Requires:	%{name}-libglapi = %{version}-%{release}
 Provides:	OpenGL = 2.1
 # reports version 1.3, but supports glXGetProcAddress() from 1.4
 Provides:	OpenGL-GLX = 1.4
@@ -77,6 +78,13 @@ Requires:	%{name}-libdricore = %{version}-%{release}
 
 %description libdricore-devel
 Shared core DRI routines library - development files.
+
+%package libglapi
+Summary:	GL API library
+Group:		Libraries
+
+%description libglapi
+GL API library.
 
 %package dri-driver-intel-i915
 Summary:	X.org DRI drivers
@@ -124,7 +132,6 @@ X.org DRI software rasterizer driver.
 	--disable-silent-rules		\
 	--enable-gallium-llvm		\
 	--enable-glx-tls		\
-	--enable-shared-glapi=no	\
 	--enable-texture-float		\
 	--enable-xa			\
 	--with-dri-driverdir=%{dridir}	\
@@ -149,6 +156,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %post	libdricore -p /usr/sbin/ldconfig
 %postun	libdricore -p /usr/sbin/ldconfig
+
+%post	libglapi -p /usr/sbin/ldconfig
+%postun	libglapi -p /usr/sbin/ldconfig
 
 %files libGL
 %defattr(644,root,root,755)
@@ -176,14 +186,19 @@ rm -rf $RPM_BUILD_ROOT
 
 %files libdricore
 %defattr(644,root,root,755)
-%attr(755,root,root) %ghost %{_libdir}/libdricore%{version}.so.1
-%attr(755,root,root) %{_libdir}/libdricore%{version}.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libdricore%{version}.0.so.1
+%attr(755,root,root) %{_libdir}/libdricore%{version}.0.so.*.*.*
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/drirc
 
 %files libdricore-devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libdricore%{version}.so
-%{_libdir}/libdricore%{version}.la
+%attr(755,root,root) %{_libdir}/libdricore%{version}.0.so
+%{_libdir}/libdricore%{version}.0.la
+
+%files libglapi
+%defattr(644,root,root,755)
+%attr(755,root,root) %ghost %{_libdir}/libglapi.so.0
+%attr(755,root,root) %{_libdir}/libglapi.so.*.*
 
 %files dri-driver-intel-i915
 %defattr(644,root,root,755)
