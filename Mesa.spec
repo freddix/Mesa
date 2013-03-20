@@ -2,14 +2,14 @@
 
 Summary:	Free OpenGL implementation
 Name:		Mesa
-Version:	9.1
+Version:	9.1.1
 %if "%{gitver}" != "%{nil}"
 Release:	0.%{gitver}.1
 Source:		http://cgit.freedesktop.org/mesa/mesa/snapshot/mesa-%{gitver}.tar.bz2
 %else
 Release:	1
 Source0:	ftp://ftp.freedesktop.org/pub/mesa/%{version}/MesaLib-%{version}.tar.gz
-# Source0-md5:	86d40f3056f89949368764bf84aff55e
+# Source0-md5:	6508d9882d8dce7106717f365632700c
 %endif
 License:	MIT (core), SGI (GLU) and others - see COPYRIGHT file
 Group:		X11/Libraries
@@ -186,14 +186,14 @@ rm -rf $RPM_BUILD_ROOT
 
 %files libdricore
 %defattr(644,root,root,755)
-%attr(755,root,root) %ghost %{_libdir}/libdricore%{version}.0.so.1
-%attr(755,root,root) %{_libdir}/libdricore%{version}.0.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libdricore%{version}.so.1
+%attr(755,root,root) %{_libdir}/libdricore%{version}.so.*.*.*
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/drirc
 
 %files libdricore-devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libdricore%{version}.0.so
-%{_libdir}/libdricore%{version}.0.la
+%attr(755,root,root) %{_libdir}/libdricore%{version}.so
+%{_libdir}/libdricore%{version}.la
 
 %files libglapi
 %defattr(644,root,root,755)
