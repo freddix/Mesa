@@ -2,14 +2,14 @@
 
 Summary:	Free OpenGL implementation
 Name:		Mesa
-Version:	9.1.3
+Version:	9.1.4
 %if "%{gitver}" != "%{nil}"
 Release:	0.%{gitver}.1
 Source:		http://cgit.freedesktop.org/mesa/mesa/snapshot/mesa-%{gitver}.tar.bz2
 %else
 Release:	1
 Source0:	ftp://ftp.freedesktop.org/pub/mesa/%{version}/MesaLib-%{version}.tar.gz
-# Source0-md5:	26d2f1aa8e9db388d51fcbd163c61fb7
+# Source0-md5:	8c7e9ce5b05cb2223f0587396dd9dc08
 %endif
 License:	MIT (core), SGI (GLU) and others - see COPYRIGHT file
 Group:		X11/Libraries
