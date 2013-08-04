@@ -2,14 +2,14 @@
 
 Summary:	Free OpenGL implementation
 Name:		Mesa
-Version:	9.1.5
+Version:	9.1.6
 %if "%{gitver}" != "%{nil}"
 Release:	0.%{gitver}.1
 Source:		http://cgit.freedesktop.org/mesa/mesa/snapshot/mesa-%{gitver}.tar.bz2
 %else
-Release:	2
+Release:	1
 Source0:	ftp://ftp.freedesktop.org/pub/mesa/%{version}/MesaLib-%{version}.tar.gz
-# Source0-md5:	47181066acf3231d74e027b2033f9455
+# Source0-md5:	08d3069cccd6821e5f33e0840bca0718
 %endif
 License:	MIT (core), SGI (GLU) and others - see COPYRIGHT file
 Group:		X11/Libraries
@@ -70,14 +70,6 @@ Group:		Libraries
 
 %description libdricore
 Shared core DRI routines library.
-
-%package libdricore-devel
-Summary:	DRI core library - development files
-Group:		X11/Development/ Libraries
-Requires:	%{name}-libdricore = %{version}-%{release}
-
-%description libdricore-devel
-Shared core DRI routines library - development files.
 
 %package libglapi
 Summary:	GL API library
@@ -145,8 +137,11 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-rm -f $RPM_BUILD_ROOT%{_includedir}/GL/{[a-fh-np-wyz],gg,glf,glut}*.h
-rm -f $RPM_BUILD_ROOT%{dridir}/*.la
+# clean up
+%{__rm} $RPM_BUILD_ROOT%{_includedir}/GL/{wglext,wmesa}.h
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/lib{dricore%{version},glapi}.so
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/lib*.la
+%{__rm} $RPM_BUILD_ROOT%{dridir}/*.la
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -186,14 +181,10 @@ rm -rf $RPM_BUILD_ROOT
 
 %files libdricore
 %defattr(644,root,root,755)
+%dir %{dridir}
 %attr(755,root,root) %ghost %{_libdir}/libdricore%{version}.so.1
 %attr(755,root,root) %{_libdir}/libdricore%{version}.so.*.*.*
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/drirc
-
-%files libdricore-devel
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libdricore%{version}.so
-%{_libdir}/libdricore%{version}.la
 
 %files libglapi
 %defattr(644,root,root,755)
