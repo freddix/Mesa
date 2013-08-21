@@ -1,15 +1,15 @@
-%define		gitver	%{nil}
+%define		gitver	796b4a7b40889747562d8d693f25f67aff35c189
 
 Summary:	Free OpenGL implementation
 Name:		Mesa
-Version:	9.1.6
+Version:	9.2.0
 %if "%{gitver}" != "%{nil}"
 Release:	0.%{gitver}.1
 Source:		http://cgit.freedesktop.org/mesa/mesa/snapshot/mesa-%{gitver}.tar.bz2
 %else
 Release:	1
 Source0:	ftp://ftp.freedesktop.org/pub/mesa/%{version}/MesaLib-%{version}.tar.gz
-# Source0-md5:	08d3069cccd6821e5f33e0840bca0718
+# Source0-md5:	760f10cb307eae760ce65e47b21ea0f8
 %endif
 License:	MIT (core), SGI (GLU) and others - see COPYRIGHT file
 Group:		X11/Libraries
@@ -78,6 +78,13 @@ Group:		Libraries
 %description libglapi
 GL API library.
 
+%package libXvMCsoftpipe
+Summary:	XvMCsoftpipe library
+Group:		Libraries
+
+%description libXvMCsoftpipe
+XvMCsoftpipe library.
+
 %package dri-driver-intel-i915
 Summary:	X.org DRI drivers
 Group:		X11/Libraries
@@ -139,7 +146,7 @@ rm -rf $RPM_BUILD_ROOT
 
 # clean up
 %{__rm} $RPM_BUILD_ROOT%{_includedir}/GL/{wglext,wmesa}.h
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/lib{dricore%{version},glapi}.so
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/lib{dricore*,glapi,XvMCsoftpipe}.so
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/lib*.la
 %{__rm} $RPM_BUILD_ROOT%{dridir}/*.la
 
@@ -157,7 +164,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files libGL
 %defattr(644,root,root,755)
-%doc docs/{*.html,README.{MITS,QUAKE,THREADS},RELNOTES*}
+%doc docs/{*.html,README.{MITS,QUAKE,THREADS}}
 %attr(755,root,root) %ghost %{_libdir}/libGL.so.1
 %attr(755,root,root) %{_libdir}/libGL.so.*.*
 # symlink for binary apps which fail to conform Linux OpenGL ABI
@@ -166,7 +173,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files libGL-devel
 %defattr(644,root,root,755)
-%doc docs/*.spec
+#%doc docs/*.spec
 %dir %{_includedir}/GL
 %dir %{_includedir}/GL/internal
 %{_includedir}/GL/gl.h
@@ -182,14 +189,19 @@ rm -rf $RPM_BUILD_ROOT
 %files libdricore
 %defattr(644,root,root,755)
 %dir %{dridir}
-%attr(755,root,root) %ghost %{_libdir}/libdricore%{version}.so.1
-%attr(755,root,root) %{_libdir}/libdricore%{version}.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libdricore%{version}*.so.1
+%attr(755,root,root) %{_libdir}/libdricore%{version}*.so.*.*.*
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/drirc
 
 %files libglapi
 %defattr(644,root,root,755)
 %attr(755,root,root) %ghost %{_libdir}/libglapi.so.0
 %attr(755,root,root) %{_libdir}/libglapi.so.*.*
+
+%files libXvMCsoftpipe
+%defattr(644,root,root,755)
+%attr(755,root,root) %ghost %{_libdir}/libXvMCsoftpipe.so.1
+%attr(755,root,root) %{_libdir}/libXvMCsoftpipe.so.*.*.*
 
 %files dri-driver-intel-i915
 %defattr(644,root,root,755)
