@@ -2,13 +2,13 @@
 
 Summary:	Free OpenGL implementation
 Name:		Mesa
-Version:	9.2.0
+Version:	9.2.1
 %if "%{gitver}" != "%{nil}"
 Release:	0.%{gitver}.1
 Source:		http://cgit.freedesktop.org/mesa/mesa/snapshot/mesa-%{gitver}.tar.bz2
 %else
 Release:	1
-Source0:	ftp://ftp.freedesktop.org/pub/mesa/9.2/MesaLib-%{version}.tar.gz
+Source0:	ftp://ftp.freedesktop.org/pub/mesa/9.2.1/MesaLib-%{version}.tar.gz
 # Source0-md5:	4f93c6475ec656fc1f7b93aeffc9b6c4
 %endif
 License:	MIT (core), SGI (GLU) and others - see COPYRIGHT file
@@ -149,6 +149,12 @@ rm -rf $RPM_BUILD_ROOT
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/lib{dricore*,glapi,XvMCsoftpipe}.so
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/lib*.la
 %{__rm} $RPM_BUILD_ROOT%{dridir}/*.la
+
+%if 0
+%check
+# 5 test failing
+%{__make} check
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
