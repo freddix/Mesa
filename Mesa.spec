@@ -2,14 +2,14 @@
 
 Summary:	Free OpenGL implementation
 Name:		Mesa
-Version:	9.2.2
+Version:	9.2.3
 %if "%{gitver}" != "%{nil}"
 Release:	0.%{gitver}.1
 Source:		http://cgit.freedesktop.org/mesa/mesa/snapshot/mesa-%{gitver}.tar.bz2
 %else
 Release:	1
 Source0:	ftp://ftp.freedesktop.org/pub/mesa/%{version}/MesaLib-%{version}.tar.gz
-# Source0-md5:	df801a975045150790e10e2ccf32193f
+# Source0-md5:	66e9a33a414f801e1c33398bf627d56b
 %endif
 License:	MIT (core), SGI (GLU) and others - see COPYRIGHT file
 Group:		X11/Libraries
@@ -28,7 +28,7 @@ BuildRequires:	xorg-util-makedepend
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		dridir			%{_libdir}/xorg/modules/dri
-%define		skip_post_check_so	libdricore.*.so.* libGL.so.1.*
+%define		skip_post_check_so	libdricore.*.so.* libGL.so.1.* libXvMCsoftpipe.so.*
 
 %description
 Mesa is a 3-D graphics library with an API which is very similar to
