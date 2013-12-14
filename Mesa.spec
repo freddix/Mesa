@@ -2,14 +2,14 @@
 
 Summary:	Free OpenGL implementation
 Name:		Mesa
-Version:	9.2.3
+Version:	10.0.1
 %if "%{gitver}" != "%{nil}"
 Release:	0.%{gitver}.1
 Source:		http://cgit.freedesktop.org/mesa/mesa/snapshot/mesa-%{gitver}.tar.bz2
 %else
-Release:	1
+Release:	2
 Source0:	ftp://ftp.freedesktop.org/pub/mesa/%{version}/MesaLib-%{version}.tar.gz
-# Source0-md5:	66e9a33a414f801e1c33398bf627d56b
+# Source0-md5:	01bde35c912e504ba62caf1ef9f7022c
 %endif
 License:	MIT (core), SGI (GLU) and others - see COPYRIGHT file
 Group:		X11/Libraries
@@ -25,10 +25,11 @@ BuildRequires:	xorg-libXdamage-devel
 BuildRequires:	xorg-libXxf86vm-devel
 BuildRequires:	xorg-proto >= 7.6
 BuildRequires:	xorg-util-makedepend
+Obsoletes:	Mesa-libdricore
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		dridir			%{_libdir}/xorg/modules/dri
-%define		skip_post_check_so	libdricore.*.so.* libGL.so.1.* libXvMCsoftpipe.so.*
+%define		skip_post_check_so	libGL.so.1.*
 
 %description
 Mesa is a 3-D graphics library with an API which is very similar to
@@ -64,13 +65,6 @@ Provides:	OpenGL-GLX-devel = 1.4
 %description libGL-devel
 Header files for Mesa3D libGL library.
 
-%package libdricore
-Summary:	DRI core library
-Group:		Libraries
-
-%description libdricore
-Shared core DRI routines library.
-
 %package libglapi
 Summary:	GL API library
 Group:		Libraries
@@ -88,7 +82,6 @@ XvMCsoftpipe library.
 %package dri-driver-intel-i915
 Summary:	X.org DRI drivers
 Group:		X11/Libraries
-Requires:	%{name}-libdricore = %{version}-%{release}
 Requires:	xorg-driver-video-intel
 Requires:	xorg-xserver-server
 
@@ -98,7 +91,6 @@ X.org DRI drivers for Intel i915 card family.
 %package dri-driver-intel-i965
 Summary:	X.org DRI drivers
 Group:		X11/Libraries
-Requires:	%{name}-libdricore = %{version}-%{release}
 Requires:	xorg-driver-video-intel
 Requires:	xorg-xserver-server
 
@@ -126,7 +118,6 @@ X.org DRI software rasterizer driver.
 %{__autoconf}
 %{__automake}
 %configure \
-	--disable-asm			\
 	--disable-egl			\
 	--disable-silent-rules		\
 	--enable-gallium-llvm		\
@@ -146,7 +137,7 @@ rm -rf $RPM_BUILD_ROOT
 
 # clean up
 %{__rm} $RPM_BUILD_ROOT%{_includedir}/GL/{wglext,wmesa}.h
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/lib{dricore*,glapi,XvMCsoftpipe}.so
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/libglapi.so
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/lib*.la
 %{__rm} $RPM_BUILD_ROOT%{dridir}/*.la
 
@@ -162,9 +153,6 @@ rm -rf $RPM_BUILD_ROOT
 %post	libGL -p /usr/sbin/ldconfig
 %postun	libGL -p /usr/sbin/ldconfig
 
-%post	libdricore -p /usr/sbin/ldconfig
-%postun	libdricore -p /usr/sbin/ldconfig
-
 %post	libglapi -p /usr/sbin/ldconfig
 %postun	libglapi -p /usr/sbin/ldconfig
 
@@ -176,6 +164,9 @@ rm -rf $RPM_BUILD_ROOT
 # symlink for binary apps which fail to conform Linux OpenGL ABI
 # (and dlopen libGL.so instead of libGL.so.1)
 %attr(755,root,root) %{_libdir}/libGL.so
+
+%dir %{dridir}
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/drirc
 
 %files libGL-devel
 %defattr(644,root,root,755)
@@ -192,22 +183,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_pkgconfigdir}/dri.pc
 %{_pkgconfigdir}/gl.pc
 
-%files libdricore
-%defattr(644,root,root,755)
-%dir %{dridir}
-%attr(755,root,root) %ghost %{_libdir}/libdricore%{version}*.so.1
-%attr(755,root,root) %{_libdir}/libdricore%{version}*.so.*.*.*
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/drirc
-
 %files libglapi
 %defattr(644,root,root,755)
 %attr(755,root,root) %ghost %{_libdir}/libglapi.so.0
 %attr(755,root,root) %{_libdir}/libglapi.so.*.*
-
-%files libXvMCsoftpipe
-%defattr(644,root,root,755)
-%attr(755,root,root) %ghost %{_libdir}/libXvMCsoftpipe.so.1
-%attr(755,root,root) %{_libdir}/libXvMCsoftpipe.so.*.*.*
 
 %files dri-driver-intel-i915
 %defattr(644,root,root,755)
