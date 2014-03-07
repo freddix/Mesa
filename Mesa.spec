@@ -2,14 +2,14 @@
 
 Summary:	Free OpenGL implementation
 Name:		Mesa
-Version:	10.0.2
+Version:	10.1.0
 %if "%{gitver}" != "%{nil}"
 Release:	0.%{gitver}.1
 Source:		http://cgit.freedesktop.org/mesa/mesa/snapshot/mesa-%{gitver}.tar.bz2
 %else
-Release:	2
-Source0:	ftp://ftp.freedesktop.org/pub/mesa/%{version}/MesaLib-%{version}.tar.gz
-# Source0-md5:	de7d14baf0101b697c140d2f47ef27e9
+Release:	1
+Source0:	ftp://ftp.freedesktop.org/pub/mesa/10.1/MesaLib-%{version}.tar.gz
+# Source0-md5:	08e796ec7122aa299d32d4f67a254315
 %endif
 License:	MIT (core), SGI (GLU) and others - see COPYRIGHT file
 Group:		X11/Libraries
@@ -23,6 +23,7 @@ BuildRequires:	libtool
 BuildRequires:	llvm-devel
 BuildRequires:	xorg-libXdamage-devel
 BuildRequires:	xorg-libXxf86vm-devel
+BuildRequires:	xorg-libxshmfence-devel
 BuildRequires:	xorg-proto >= 7.6
 BuildRequires:	xorg-util-makedepend
 Obsoletes:	Mesa-libdricore
@@ -120,6 +121,7 @@ X.org DRI software rasterizer driver.
 %configure \
 	--disable-egl			\
 	--disable-silent-rules		\
+	--enable-dri3			\
 	--enable-gallium-llvm		\
 	--enable-glx-tls		\
 	--enable-texture-float		\
@@ -158,7 +160,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files libGL
 %defattr(644,root,root,755)
-%doc docs/{*.html,README.{MITS,QUAKE,THREADS}}
+%doc docs/{*.html,GL3.txt}
 %attr(755,root,root) %ghost %{_libdir}/libGL.so.1
 %attr(755,root,root) %{_libdir}/libGL.so.*.*
 # symlink for binary apps which fail to conform Linux OpenGL ABI
