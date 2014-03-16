@@ -1,0 +1,9 @@
+diff -aurN Mesa-10.1.0.orig/src/gallium/state_trackers/xa/Makefile.am Mesa-10.1.0/src/gallium/state_trackers/xa/Makefile.am
+--- Mesa-10.1.0.orig/src/gallium/state_trackers/xa/Makefile.am	2014-03-13 22:35:58.382503984 +0100
++++ Mesa-10.1.0/src/gallium/state_trackers/xa/Makefile.am	2014-03-13 22:41:54.199013771 +0100
+@@ -42,3 +42,5 @@
+ noinst_LTLIBRARIES = libxatracker.la
+ 
+ libxatracker_la_SOURCES = $(C_SOURCES)
++libxatracker_la_LIBADD = $(LIBDRM_LIBS)
++
