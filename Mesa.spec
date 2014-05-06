@@ -7,7 +7,7 @@ Version:	10.1.2
 Release:	0.%{gitver}.1
 Source:		http://cgit.freedesktop.org/mesa/mesa/snapshot/mesa-%{gitver}.tar.bz2
 %else
-Release:	3
+Release:	4
 Source0:	ftp://ftp.freedesktop.org/pub/mesa/10.1.2/MesaLib-%{version}.tar.gz
 # Source0-md5:	37d79f94b1f41852a89d1fc3900bea76
 %endif
@@ -34,8 +34,8 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		dridir			%{_libdir}/xorg/modules/dri
 %define		skip_post_check_so	libGL.so.1.* libGLESv1_CM.so.1.* libGLESv2.so.2.*
 
-%define		dridrvs	i915,i965,nouveau,swrast
-%define		galdrvs	r600,radeonsi,nouveau,svga,swrast
+%define		dridrvs	i915,i965,r200,radeon,nouveau,swrast
+%define		galdrvs	r300,r600,radeonsi,nouveau,svga,swrast
 
 %define		specflags   -DNDEBUG
 
@@ -184,6 +184,16 @@ Suggests:	libtxc_dxtn
 
 %description dri-driver-intel-i965
 X.org DRI drivers for Intel i965 card family.
+
+%package dri-driver-ati-legacy
+Summary:	X.org DRI drivers
+Group:		X11/Libraries
+Requires:	xorg-driver-video-ati
+Requires:	xorg-xserver-server
+Suggests:	libtxc_dxtn
+
+%description dri-driver-ati-legacy
+X.org DRI drivers for ATI R2xx/R3xx card family.
 
 %package dri-driver-ati-r600
 Summary:	X.org DRI drivers
@@ -460,6 +470,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_pkgconfigdir}/xatracker.pc
 
 # dri drivers
+%files dri-driver-ati-legacy
+%defattr(644,root,root,755)
+%attr(755,root,root) %{dridir}/r200_dri.so
+%attr(755,root,root) %{dridir}/r300_dri.so
+%attr(755,root,root) %{dridir}/radeon_dri.so
+%attr(755,root,root) %{_libdir}/gallium-pipe/pipe_r300.so
+
 %files dri-driver-ati-r600
 %defattr(644,root,root,755)
 %attr(755,root,root) %{dridir}/r600_dri.so
