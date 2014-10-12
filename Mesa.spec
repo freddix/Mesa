@@ -2,14 +2,14 @@
 
 Summary:	Free OpenGL implementation
 Name:		Mesa
-Version:	10.2.1
+Version:	10.3.0
 %if "%{gitver}" != "%{nil}"
 Release:	0.%{gitver}.1
 Source:		http://cgit.freedesktop.org/mesa/mesa/snapshot/mesa-%{gitver}.tar.bz2
 %else
-Release:	1
-Source0:	ftp://ftp.freedesktop.org/pub/mesa/%{version}/MesaLib-%{version}.tar.gz
-# Source0-md5:	96f892dae2d0bb14ac9c2113f586c909
+Release:	2
+Source0:	ftp://ftp.freedesktop.org/pub/mesa/10.3/MesaLib-%{version}.tar.bz2
+# Source0-md5:	bc071575596a074df2b15cac57c01ed8
 %endif
 Patch0:		%{name}-link.patch
 License:	MIT (core), SGI (GLU) and others - see COPYRIGHT file
@@ -27,7 +27,6 @@ BuildRequires:	xorg-libXdamage-devel
 BuildRequires:	xorg-libXxf86vm-devel
 BuildRequires:	xorg-libxshmfence-devel
 BuildRequires:	xorg-proto >= 7.6
-BuildRequires:	xorg-util-makedepend
 Obsoletes:	Mesa-libdricore
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -310,15 +309,17 @@ X.org Gallium3D VMWare driver.
 %{__autoconf}
 %{__automake}
 %configure \
+	--disable-gallium-egl			\
+	--disable-gallium-gbm			\
 	--disable-silent-rules			\
 	--enable-dri3				\
 	--enable-egl				\
-	--enable-gallium-egl			\
 	--enable-gallium-llvm			\
 	--enable-gbm				\
 	--enable-gles1				\
 	--enable-gles2				\
 	--enable-glx-tls			\
+	--enable-llvm-shared-libs		\
 	--enable-shared-glapi			\
 	--enable-texture-float			\
 	--enable-xa				\
@@ -326,8 +327,7 @@ X.org Gallium3D VMWare driver.
 	--with-dri-drivers="%{dridrvs}"		\
 	--with-egl-platforms=x11,drm,wayland	\
 	--with-gallium-drivers="%{galdrvs}"	\
-	--with-llvm-prefix=%{_prefix}		\
-	--with-llvm-shared-libs
+	--with-llvm-prefix=%{_prefix}
 %{__make}
 
 %install
@@ -339,8 +339,8 @@ rm -rf $RPM_BUILD_ROOT
 # clean up
 %{__rm} $RPM_BUILD_ROOT%{_includedir}/GL/{wglext,wmesa}.h
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/libglapi.so
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/{lib,*/}*.la
-%{__rm} $RPM_BUILD_ROOT%{dridir}/*.la
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/lib*.la
+#%{__rm} $RPM_BUILD_ROOT%{dridir}/*.la
 
 %if 0
 %check
@@ -387,6 +387,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_includedir}/GL/internal
 %{_includedir}/GL/gl.h
 %{_includedir}/GL/gl_mangle.h
+%{_includedir}/GL/glcorearb.h
 %{_includedir}/GL/glext.h
 %{_includedir}/GL/glx.h
 %{_includedir}/GL/glx_mangle.h
@@ -400,8 +401,10 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %attr(755,root,root) %ghost %{_libdir}/libEGL.so.1
 %attr(755,root,root) %{_libdir}/libEGL.so.*.*.*
+%if 0
 %dir %{_libdir}/egl
 %attr(755,root,root) %{_libdir}/egl/egl_gallium.so
+%endif
 
 %files libEGL-devel
 %defattr(644,root,root,755)
@@ -409,6 +412,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_includedir}/EGL
 %{_includedir}/EGL/egl.h
 %{_includedir}/EGL/eglext.h
+%{_includedir}/EGL/eglextchromium.h
 %{_includedir}/EGL/eglmesaext.h
 %{_includedir}/EGL/eglplatform.h
 %{_pkgconfigdir}/egl.pc
@@ -434,8 +438,10 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %attr(755,root,root) %ghost %{_libdir}/libgbm.so.1
 %attr(755,root,root) %{_libdir}/libgbm.so.*.*.*
+%if 0
 %dir %{_libdir}/gbm
 %{_libdir}/gbm/gbm_gallium_drm.so
+%endif
 
 %files libgbm-devel
 %defattr(644,root,root,755)
@@ -455,7 +461,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files libwayland-EGL-devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %ghost %{_libdir}/libwayland-egl.so
+%attr(755,root,root) %{_libdir}/libwayland-egl.so
 %{_pkgconfigdir}/wayland-egl.pc
 
 %files libxatracker
@@ -475,7 +481,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{dridir}/r200_dri.so
 %attr(755,root,root) %{dridir}/r300_dri.so
 %attr(755,root,root) %{dridir}/radeon_dri.so
+%if 0
 %attr(755,root,root) %{_libdir}/gallium-pipe/pipe_r300.so
+%endif
 
 %files dri-driver-ati-r600
 %defattr(644,root,root,755)
@@ -500,12 +508,14 @@ rm -rf $RPM_BUILD_ROOT
 
 %files dri-driver-swrast
 %defattr(644,root,root,755)
+%attr(755,root,root) %{dridir}/kms_swrast_dri.so
 %attr(755,root,root) %{dridir}/swrast_dri.so
 
 %files dri-driver-vmware
 %defattr(644,root,root,755)
 %attr(755,root,root) %{dridir}/vmwgfx_dri.so
 
+%if 0
 # gallium drivers
 %files gallium-pipe-nvidia-nouveau
 %defattr(644,root,root,755)
@@ -526,4 +536,5 @@ rm -rf $RPM_BUILD_ROOT
 %files gallium-pipe-vmware
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/gallium-pipe/pipe_vmwgfx.so
+%endif
 
