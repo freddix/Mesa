@@ -2,14 +2,14 @@
 
 Summary:	Free OpenGL implementation
 Name:		Mesa
-Version:	10.3.0
+Version:	10.3.1
 %if "%{gitver}" != "%{nil}"
 Release:	0.%{gitver}.1
 Source:		http://cgit.freedesktop.org/mesa/mesa/snapshot/mesa-%{gitver}.tar.bz2
 %else
 Release:	2
-Source0:	ftp://ftp.freedesktop.org/pub/mesa/10.3/MesaLib-%{version}.tar.bz2
-# Source0-md5:	bc071575596a074df2b15cac57c01ed8
+Source0:	ftp://ftp.freedesktop.org/pub/mesa/10.3.1/MesaLib-%{version}.tar.bz2
+# Source0-md5:	c16ad5e524dd840ad2a71ec297b3d29a
 %endif
 Patch0:		%{name}-link.patch
 License:	MIT (core), SGI (GLU) and others - see COPYRIGHT file
@@ -118,6 +118,7 @@ Header files for Mesa3D GLES library.
 Summary:	gbm library
 Group:		Libraries
 Requires:	%{name}-libglapi = %{version}-%{release}
+Provides:	libgbm = %{version}-%{release}
 
 %description libgbm
 gbm library.
@@ -127,6 +128,7 @@ Summary:	Header files for Mesa3D gbm library
 License:	MIT
 Group:		X11/Development/Libraries
 Requires:	%{name}-libgbm = %{version}-%{release}
+Provides:	libgbm-devel = %{version}-%{release}
 
 %description libgbm-devel
 Header files for Mesa3D gbm library.
