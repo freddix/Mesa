@@ -2,16 +2,15 @@
 
 Summary:	Free OpenGL implementation
 Name:		Mesa
-Version:	10.3.1
+Version:	10.5.1
 %if "%{gitver}" != "%{nil}"
 Release:	0.%{gitver}.1
 Source:		http://cgit.freedesktop.org/mesa/mesa/snapshot/mesa-%{gitver}.tar.bz2
 %else
-Release:	2
-Source0:	ftp://ftp.freedesktop.org/pub/mesa/10.3.1/MesaLib-%{version}.tar.bz2
-# Source0-md5:	c16ad5e524dd840ad2a71ec297b3d29a
+Release:	1
+Source0:	ftp://ftp.freedesktop.org/pub/mesa/%{version}/mesa-%{version}.tar.xz
+# Source0-md5:	203dba1fb6b503802fa6625181b26d31
 %endif
-Patch0:		%{name}-link.patch
 License:	MIT (core), SGI (GLU) and others - see COPYRIGHT file
 Group:		X11/Libraries
 URL:		http://www.mesa3d.org/
@@ -22,6 +21,7 @@ BuildRequires:	libdrm-devel
 BuildRequires:	libstdc++-devel
 BuildRequires:	libtool
 BuildRequires:	llvm-devel >= 3.4
+BuildRequires:	python-Mako
 BuildRequires:	wayland-devel
 BuildRequires:	xorg-libXdamage-devel
 BuildRequires:	xorg-libXxf86vm-devel
@@ -244,66 +244,12 @@ Requires:	xorg-xserver-server
 %description dri-driver-vmware
 X.org DRI VMWare driver.
 
-# gallium drivers
-%package gallium-pipe-nvidia-nouveau
-Summary:	X.org DRI drivers
-Group:		X11/Libraries
-Requires:	%{name}-libgbm = %{version}-%{release}
-Requires:	xorg-driver-video-nouveau
-Requires:	xorg-xserver-server
-Suggests:	libtxc_dxtn
-
-%description gallium-pipe-nvidia-nouveau
-X.org Gallium3D NVIDIA driver.
-
-%package gallium-pipe-ati-r600
-Summary:	X.org DRI drivers
-Group:		X11/Libraries
-Requires:	%{name}-libgbm = %{version}-%{release}
-Requires:	xorg-driver-video-ati
-Requires:	xorg-xserver-server
-Suggests:	libtxc_dxtn
-
-%description gallium-pipe-ati-r600
-X.org Gallium3D ATI R600/700 driver.
-
-%package gallium-pipe-ati-radeonsi
-Summary:	X.org DRI drivers
-Group:		X11/Libraries
-Requires:	%{name}-libgbm = %{version}-%{release}
-Requires:	xorg-driver-video-ati
-Requires:	xorg-xserver-server
-Suggests:	libtxc_dxtn
-
-%description gallium-pipe-ati-radeonsi
-X.org Gallium3D ATI Southern Islands driver.
-
-%package gallium-pipe-swrast
-Summary:	X.org DRI drivers
-Group:		X11/Libraries
-Requires:	%{name}-libgbm = %{version}-%{release}
-Requires:	xorg-xserver-server
-
-%description gallium-pipe-swrast
-X.org Gallium3D software rasterizer driver.
-
-%package gallium-pipe-vmware
-Summary:	X.org DRI drivers
-Group:		X11/Libraries
-Requires:	%{name}-libgbm = %{version}-%{release}
-Requires:	xorg-driver-video-vmware
-Requires:	xorg-xserver-server
-
-%description gallium-pipe-vmware
-X.org Gallium3D VMWare driver.
-
 %prep
 %if "%{gitver}" != "%{nil}"
 %setup -qn mesa-%{gitver}
 %else
-%setup -q
+%setup -qn mesa-%{version}
 %endif
-%patch0 -p1
 
 %build
 %{__libtoolize}
@@ -311,8 +257,6 @@ X.org Gallium3D VMWare driver.
 %{__autoconf}
 %{__automake}
 %configure \
-	--disable-gallium-egl			\
-	--disable-gallium-gbm			\
 	--disable-silent-rules			\
 	--enable-dri3				\
 	--enable-egl				\
@@ -403,10 +347,6 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %attr(755,root,root) %ghost %{_libdir}/libEGL.so.1
 %attr(755,root,root) %{_libdir}/libEGL.so.*.*.*
-%if 0
-%dir %{_libdir}/egl
-%attr(755,root,root) %{_libdir}/egl/egl_gallium.so
-%endif
 
 %files libEGL-devel
 %defattr(644,root,root,755)
@@ -440,10 +380,6 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %attr(755,root,root) %ghost %{_libdir}/libgbm.so.1
 %attr(755,root,root) %{_libdir}/libgbm.so.*.*.*
-%if 0
-%dir %{_libdir}/gbm
-%{_libdir}/gbm/gbm_gallium_drm.so
-%endif
 
 %files libgbm-devel
 %defattr(644,root,root,755)
@@ -483,9 +419,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{dridir}/r200_dri.so
 %attr(755,root,root) %{dridir}/r300_dri.so
 %attr(755,root,root) %{dridir}/radeon_dri.so
-%if 0
-%attr(755,root,root) %{_libdir}/gallium-pipe/pipe_r300.so
-%endif
 
 %files dri-driver-ati-r600
 %defattr(644,root,root,755)
@@ -517,26 +450,17 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %attr(755,root,root) %{dridir}/vmwgfx_dri.so
 
+# unpackaged
 %if 0
-# gallium drivers
-%files gallium-pipe-nvidia-nouveau
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/gallium-pipe/pipe_nouveau.so
-
-%files gallium-pipe-ati-r600
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/gallium-pipe/pipe_r600.so
-
-%files gallium-pipe-ati-radeonsi
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/gallium-pipe/pipe_radeonsi.so
-
-%files gallium-pipe-swrast
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/gallium-pipe/pipe_swrast.so
-
-%files gallium-pipe-vmware
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/gallium-pipe/pipe_vmwgfx.so
+   /usr/lib64/dri/gallium_drv_video.la
+   /usr/lib64/dri/gallium_drv_video.so
+   /usr/lib64/libXvMCnouveau.so
+   /usr/lib64/libXvMCnouveau.so.1
+   /usr/lib64/libXvMCnouveau.so.1.0
+   /usr/lib64/libXvMCnouveau.so.1.0.0
+   /usr/lib64/libXvMCr600.so
+   /usr/lib64/libXvMCr600.so.1
+   /usr/lib64/libXvMCr600.so.1.0
+   /usr/lib64/libXvMCr600.so.1.0.0
 %endif
 
